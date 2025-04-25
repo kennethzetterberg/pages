@@ -1,0 +1,556 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "grunddata-schema.json#",
+  "type": "object",
+  "properties": {
+    "Grunddata": {
+      "type": "object",
+      "description": "Grunddata för Fyren.\n",
+      "required": [
+        "schema",
+        "katalog",
+        "system",
+        "parametrar",
+        "kundhandelsemallar",
+        "anslagsmallar",
+        "processgrupper"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "$ref": "#/definitions/Schema"
+        },
+        "katalog": {
+          "$ref": "#/definitions/Katalog"
+        },
+        "system": {
+          "type": "array",
+          "description": "Lista över system som skickar kundhändelser.\n",
+          "items": {
+            "$ref": "#/definitions/System"
+          }
+        },
+        "parametrar": {
+          "type": "array",
+          "description": "Lista över parametrar som är tillgängliga för kundhändelsemallarna.\n",
+          "items": {
+            "$ref": "#/definitions/Parameter"
+          }
+        },
+        "kundhandelsemallar": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Kundhandelsemall"
+          }
+        },
+        "anslagsmallar": {
+          "type": "array",
+          "description": "Lista över alla anslagsmallar.\n",
+          "items": {
+            "$ref": "#/definitions/Anslagsmall"
+          }
+        },
+        "processgrupper": {
+          "type": "array",
+          "description": "Lista över processgrupper.\n",
+          "items": {
+            "$ref": "#/definitions/Processgrupp"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Schema": {
+      "$id": "Schema",
+      "type": "object",
+      "description": "Information om ett system som skickar kundhändelser.\n",
+      "required": ["uri", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "urn:uuid:9c22c2bd-b018-41e6-a813-6aa3535e203f"
+        },
+        "version": {
+          "$ref": "SchemaVersion"
+        }
+      }
+    },
+    "Katalog": {
+      "$id": "Katalog",
+      "type": "object",
+      "description": "Information om katalogen som helhet.",
+      "required": ["uri", "producent", "producentprefix"],
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "uri"
+        },
+        "namn": {
+          "type": "string",
+          "description": "Namn på katalogen"
+        },
+        "beskrivning": {
+          "type": "string",
+          "description": "Beskrivning på katalogen"
+        },
+        "producent": {
+          "type": "string",
+          "description": "Namn på producenten av kundhändelsekatalogen."
+        },
+        "producentprefix": {
+          "type": "string",
+          "description": " Kundhändelsetypens första segment. se \"Mina ärenden\" för mer information om kundhändelsetyper."
+        },
+        "maxdjupProcessgrupper": {
+          "type": "integer",
+          "description": "Antal nivåer som processgrupper som mest tillåts organiseras i. 1 innebär att\n            inga processgrupper får ha en förälder. 2 innebär att en processgrupp inte\n            få ha en förälder som har en förälder, osv.\n            \n            Processernas maximala djup begränsas av de grupper de ingår i.",
+          "minimum": 1,
+          "default": 1
+        }
+      }
+    },
+    "System": {
+      "$id": "System",
+      "type": "object",
+      "description": "Information om ett system som skickar kundhändelser.\n",
+      "required": ["id", "namn"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "UUID"
+        },
+        "namn": {
+          "type": "string",
+          "description": "Systemnamn\n"
+        },
+        "beskrivning": {
+          "type": "string",
+          "description": "Beskrivning av systemet.\n"
+        }
+      }
+    },
+    "Parameter": {
+      "$id": "Parameter",
+      "type": "object",
+      "description": "Information om en parameter som kan användas i kundhändelsemallarna.\n",
+      "required": ["id", "namn"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "UUID"
+        },
+        "namn": {
+          "type": "string",
+          "description": "Tekniskt namn på parametern. Ska hanteras som en identifierare, men också vara intuitivt begriplig (i möjligaste mån). Används för att sätta de parametrar som behövs för att omvandla kundhändelsemallen till en konkret kundhändelse.\n",
+          "pattern": "^[a-zåäö_]+$"
+        },
+        "beskrivning": {
+          "type": "string",
+          "description": "Beskrivning av parametern.\n"
+        }
+      }
+    },
+    "Syntax": {
+      "$id": "Syntax",
+      "type": "object",
+      "description": "Kundhändelsemallens syntax definierar utformningen av kundhändelser av den typen.\n",
+      "required": ["rubrik"],
+      "additionalProperties": false,
+      "properties": {
+        "rubrik": {
+          "type": "string",
+          "description": "Kundhändelsemallens rubrik.\n"
+        },
+        "beskrivning": {
+          "type": "string",
+          "description": "KUndhändelsemallens beskrivning.\n"
+        }
+      }
+    },
+    "Exempel": {
+      "$id": "Exempel",
+      "type": "object",
+      "description": "Exempel på parametervärden.\n",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "Process": {
+      "$id": "Process",
+      "type": "object",
+      "required": ["namn"],
+      "additionalProperties": false,
+      "properties": {
+        "namn": {
+          "type": "string",
+          "pattern": "^[A-Z](_?[A-Z0-9]+)*$",
+          "description": "Processens tekniska namn. Ska hanteras som en identifierare, men också vara intuitivt begriplig (i möjligaste mån). Används för att korrelera ärenden i samma process.\n"
+        },
+        "beskrivning": {
+          "type": "string",
+          "description": "Beskrivning av processen.\n"
+        }
+      }
+    },
+    "Steg": {
+      "$id": "Steg",
+      "type": "object",
+      "description": "Ett steg i processen.\n",
+      "required": ["id", "namn", "system", "kundhandelsemall"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "UUID"
+        },
+        "namn": {
+          "type": "string",
+          "pattern": "^[A-Z_]+$",
+          "description": "Tekniskt namn på processteget där händelsen uppstod. Ska hanteras som en identifierare, men också vara intuitivt begriplig (i möjligaste mån). Används för att korrelera händelser som uppstått i samma processteg.\n"
+        },
+        "system": {
+          "type": "array",
+          "items": {
+            "$ref": "UUID"
+          }
+        },
+        "kundhandelsemall": {
+          "$ref": "UUID"
+        },
+        "startpunkt": {
+          "type": "boolean",
+          "default": false,
+          "description": "Sant om processen kan börja med detta steg, annars falskt."
+        },
+        "overlamningspunkt": {
+          "type": "boolean",
+          "default": false,
+          "description": "Sant om initiativet för att processen ska komma vidare i och med detta steg överlämnas till kunden, annars falskt."
+        },
+        "slutpunkt": {
+          "type": "boolean",
+          "default": false,
+          "description": "Sant om processen kan sluta med detta steg, annars falskt."
+        },
+        "nastaSteg": {
+          "type": "array",
+          "description": "Lista med möjliga nästa steg i processen.\n",
+          "items": {
+            "$ref": "UUID"
+          }
+        }
+      }
+    },
+    "Anteckning": {
+      "type": "string",
+      "description": "Utrymme för minnesanteckning.\n"
+    },
+    "Anslagsmall": {
+      "$id": "Anslagsmall",
+      "type": "object",
+      "description": "Information om en anslagsmall.\n",
+      "required": [
+        "metadata",
+        "id",
+        "namn",
+        "kategori",
+        "system",
+        "syntax",
+        "parametrar",
+        "exempel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "$ref": "Metadata"
+        },
+        "id": {
+          "$ref": "UUID"
+        },
+        "namn": {
+          "type": "string",
+          "description": "Tekniskt namn på anslagsmallen. Ska hanteras som en identifierare. Används som identifierare när anslag skickas, samt vid samtal om olika anslagsmallar.\n",
+          "pattern": "^[A-Z]+[0-9]+$"
+        },
+        "anteckning": {
+          "type": "string",
+          "description": "Utrymme för minnesanteckning.\n"
+        },
+        "kategori": {
+          "type": "string",
+          "enum": ["Utkast", "Mottagningskvittens", "Anmärkning"],
+          "description": "Anslagets kategori.\n"
+        },
+        "system": {
+          "type": "array",
+          "items": {
+            "$ref": "UUID"
+          }
+        },
+        "beskrivning": {
+          "type": "string",
+          "description": "Beskrivning av  anslagsmallen.\n"
+        },
+        "syntax": {
+          "type": "object",
+          "description": "Kundhändelsemallens syntax definierar utformningen av kundhändelser av den typen.\n",
+          "required": ["rubrik"],
+          "additionalProperties": false,
+          "properties": {
+            "rubrik": {
+              "type": "string",
+              "description": "Kundhändelsemallens rubrik.\n"
+            },
+            "beskrivning": {
+              "type": "string",
+              "description": "KUndhändelsemallens beskrivning.\n"
+            }
+          }
+        },
+        "parametrar": {
+          "type": "array",
+          "items": {
+            "$ref": "UUID"
+          }
+        },
+        "exempel": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "Exempel på parametervärden.\n",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "Kundhandelsemall": {
+      "$id": "Kundhandelsemall",
+      "type": "object",
+      "description": "Information om en kundhändelsemall.\n",
+      "required": [
+        "metadata",
+        "id",
+        "namn",
+        "kategori",
+        "system",
+        "syntax",
+        "parametrar",
+        "exempel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "$ref": "Metadata"
+        },
+        "id": {
+          "$ref": "UUID"
+        },
+        "namn": {
+          "type": "string",
+          "description": "Tekniskt namn på kundhändelsemallen. Ska hanteras som en identifierare. Används främst vid samtal om olika kundhändelsemallar (kravarbete).\n",
+          "pattern": "^[A-Z]+[A-Z0-9]+$"
+        },
+        "anteckning": {
+          "type": "string",
+          "description": "Utrymme för minnesanteckning.\n"
+        },
+        "kategori": {
+          "type": "string",
+          "enum": ["Mottagningskvittens", "Beslut", "Fråga", "Upplysning"],
+          "description": "Kundhändelsens kategori.\n"
+        },
+        "system": {
+          "type": "array",
+          "items": {
+            "$ref": "UUID"
+          }
+        },
+        "beskrivning": {
+          "type": "string",
+          "description": "Beskrivning av  kundhändelsemallen.\n"
+        },
+        "syntax": {
+          "type": "object",
+          "description": "Kundhändelsemallens syntax definierar utformningen av kundhändelser av den typen.\n",
+          "required": ["rubrik"],
+          "additionalProperties": false,
+          "properties": {
+            "rubrik": {
+              "type": "string",
+              "description": "Kundhändelsemallens rubrik.\n"
+            },
+            "beskrivning": {
+              "type": "string",
+              "description": "KUndhändelsemallens beskrivning.\n"
+            }
+          }
+        },
+        "parametrar": {
+          "type": "array",
+          "items": {
+            "$ref": "UUID"
+          }
+        },
+        "exempel": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "Exempel på parametervärden.\n",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "Metadata": {
+      "$id": "Metadata",
+      "type": "object",
+      "description": "Metadata om objekten som hanteras i Fyrvaktaren.\n",
+      "required": ["skapatDatum", "uppdateratDatum"],
+      "additionalProperties": false,
+      "properties": {
+        "skapatDatum": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "uppdateratDatum": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Processgrupp": {
+      "$id": "Processgrupp",
+      "type": "object",
+      "required": [
+        "metadata",
+        "id",
+        "namn",
+        "arendeidsyntax",
+        "processer",
+        "steg"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "$ref": "Metadata"
+        },
+        "id": {
+          "$ref": "UUID"
+        },
+        "namn": {
+          "type": "string",
+          "pattern": "^[A-Z]+(\\.?[0-9])+$",
+          "description": "Tekniskt namn på processgruppen.\nSka hanteras som en identifierare.\nAnvänds främst vid samtal om olika processgrupper (kravarbete)."
+        },
+        "anteckning": {
+          "type": "string",
+          "description": "Utrymme för minnesanteckning.\n"
+        },
+        "beskrivning": {
+          "type": "string",
+          "description": "Beskrivning av processgruppen.\n"
+        },
+        "arendeidsyntax": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+:[^:]+$",
+          "description": "Syntax för ärendeid:n. Används för information och (eventuellt) validering."
+        },
+        "foralder": {
+          "$ref": "UUID"
+        },
+        "processer": {
+          "type": "array",
+          "description": "Lista över processer.\n",
+          "minItems": 1,
+          "items": {
+            "$ref": "Process"
+          }
+        },
+        "steg": {
+          "type": "array",
+          "description": "Lista med steg i processen.\n",
+          "items": {
+            "type": "object",
+            "description": "Ett steg i processen.\n",
+            "required": ["id", "namn", "system", "kundhandelsemall"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "$ref": "UUID"
+              },
+              "namn": {
+                "type": "string",
+                "pattern": "^[A-Z_]+$",
+                "description": "Tekniskt namn på processteget där händelsen uppstod. Ska hanteras som en identifierare, men också vara intuitivt begriplig (i möjligaste mån). Används för att korrelera händelser som uppstått i samma processteg.\n"
+              },
+              "system": {
+                "type": "array",
+                "items": {
+                  "$ref": "UUID"
+                }
+              },
+              "kundhandelsemall": {
+                "$ref": "UUID"
+              },
+              "startpunkt": {
+                "type": "boolean",
+                "default": false,
+                "description": "Sant om processen kan börja med detta steg, annars falskt."
+              },
+              "overlamningspunkt": {
+                "type": "boolean",
+                "default": false,
+                "description": "Sant om initiativet för att processen ska komma vidare i och med detta steg överlämnas till kunden, annars falskt."
+              },
+              "slutpunkt": {
+                "type": "boolean",
+                "default": false,
+                "description": "Sant om processen kan sluta med detta steg, annars falskt."
+              },
+              "nastaSteg": {
+                "type": "array",
+                "description": "Lista med möjliga nästa steg i processen.\n",
+                "items": {
+                  "$ref": "UUID"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "SchemaVersion": {
+      "$id": "SchemaVersion",
+      "type": "object",
+      "description": "Version av schemat.",
+      "required": ["id", "major", "minor"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "UUID"
+        },
+        "major": {
+          "type": "integer",
+          "description": "Filen är inte kompatibel med en programvara som arbetar med en tidigare version. \nSärskild logik behövs för att uppgradera en version till en annan."
+        },
+        "minor": {
+          "type": "integer",
+          "description": "Filen är kompatibel med en programvara som arbetar med en tidigare version, men dataförlust kan uppstå."
+        }
+      }
+    },
+    "UUID": {
+      "$id": "UUID",
+      "type": "string",
+      "description": "Ett unikt id.",
+      "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$"
+    }
+  }
+}

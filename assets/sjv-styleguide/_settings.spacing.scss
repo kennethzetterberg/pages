@@ -1,0 +1,38 @@
+// Spacing variabler
+$jv-space-xxs: 0.125rem;
+$jv-space-xs: 0.25rem;
+$jv-space-s: 0.5rem;
+$jv-space-m: 1rem;
+$jv-space-l: 2rem;
+$jv-space-xl: 4rem;
+
+// Bottom spacing
+$jv-space-stack-xxs: 0 0 0.125rem 0;
+$jv-space-stack-xs: 0 0 0.25rem 0;
+$jv-space-stack-s: 0 0 0.5rem 0;
+$jv-space-stack-m: 0 0 1rem 0;
+$jv-space-stack-l: 0 0 2rem 0;
+$jv-space-stack-xl: 0 0 4rem 0;
+
+// Inline / right spacing (unused in designsystem)
+$jv-space-inline-xxs: 0 0.125rem 0 0;
+$jv-space-inline-xs: 0 0.25rem 0 0;
+$jv-space-inline-s: 0 0.5rem 0 0;
+$jv-space-inline-m: 0 1rem 0 0;
+$jv-space-inline-l: 0 2rem 0 0;
+$jv-space-inline-xl: 0 4rem 0 0;
+
+// Concept spacing (unused in designsystem)
+$jv-space-inset-xxs: 0.125rem 0.125rem 0.125rem 0.125rem;
+$jv-space-inset-xs: 0.25rem 0.25rem 0.25rem 0.25rem;
+$jv-space-inset-s: 0.5rem 0.5rem 0.5rem 0.5rem;
+$jv-space-inset-m: 1rem 1rem 1rem 1rem;
+$jv-space-inset-l: 2rem 2rem 2rem 2rem;
+$jv-space-inset-xl: 4rem 4rem 4rem 4rem;
+
+$jv-space-inset-squish-s: 0.25rem 0.5rem 0.25rem 0.5rem;
+$jv-space-inset-squish-m: 0.5rem 1rem 0.5rem 1rem;
+$jv-space-inset-squish-l: 1rem 2rem 1rem 2rem;
+
+$jv-space-inset-stretch-s: 0.75rem 0.5rem 0.75rem 0.5rem;
+$jv-space-inset-stretch-m: 1.5rem 1rem 1.5rem 1rem;
